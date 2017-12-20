@@ -11,15 +11,23 @@ initAWS();
 initDB('keys');
 
 var output = $('#output');
+var bucketName = 'assets.bpwalters.com';
+var initFolderName = 'images/';
 
 init();
 
 $(document).on('click', '#output ul li a', function () {
-    var src = $(this).attr('data-src');
+    loadFromBucket(bucketName, $(this).attr('data-src'));
+});
 
-    //console.log($(this).attr('data-src'));
-    getS3Objects('assets.bpwalters.com', src, false, function (data) {
+function init () {
+    loadFromBucket(bucketName, initFolderName);
+}
+
+function loadFromBucket(bucketName, folderName) {
+    getS3Objects(bucketName, folderName, false, function (data) {
         var ul = $('<ul></ul>');
+
         var topA = $('<a></a>');
         topA.html('/');
         topA.attr('href', '#');
@@ -43,36 +51,6 @@ $(document).on('click', '#output ul li a', function () {
         });
 
         output.empty();
-
-        output.append(ul);
-    });
-});
-
-function init () {
-    getS3Objects('assets.bpwalters.com', 'images/', false, function (data) {
-        var ul = $('<ul></ul>');
-
-        var topA = $('<a></a>');
-        topA.html('/');
-        topA.attr('href', '#');
-        topA.attr('data-src', '');
-
-        var topLi = $('<li></li>');
-        topLi.html(topA);
-
-        ul.append(topLi);
-
-        data.forEach(function (d) {
-            var a = $('<a></a>');
-            a.html(d);
-            a.attr('href', '#');
-            a.attr('data-src', d);
-
-            var li = $('<li></li>');
-            li.html(a);
-
-            ul.append(li);
-        });
 
         output.append(ul);
     });
